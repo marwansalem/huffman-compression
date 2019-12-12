@@ -4,6 +4,7 @@ using namespace std;
 struct Node{
     char character;
     unsigned int frequency;
+    bool is_char;
     struct Node* left;
     struct Node* right;
 };
@@ -17,7 +18,7 @@ struct compareNodeptr {
 
 string path = "";
 void count_occurences(string buff ,unordered_map<char , unsigned int>&freq);
-void generate_huffman_tree(unordered_map<char ,unsigned int>&freq);
+Node* generate_huffman_tree(unordered_map<char ,unsigned int>&freq);
 void create_node(char, unsigned int);
 int main()
 {
@@ -60,11 +61,17 @@ Node* create_node(char character, unsigned int frequency) {
     return new_node;
 }
 
-void generate_huffman_tree(unordered_map<char , unsigned int>&freq ) {
+Node* generate_huffman_tree(unordered_map<char , unsigned int>&freq ) {
 
     priority_queue<Node*, vector<Node*>, compareNodeptr> pq;
+    int number_of_chars = 0;
     for(auto iter = freq.begin(); iter != freq.end(); ++iter ) {
         Node* char_node = create_node(iter->first, iter->second);
+        char_node->is_char = true;
+        pq.push(char_node);
+        number_of_chars++;
     }
-
+    for(int idx = 0; idx < number_of_chars - 1 ; ++idx ) {
+        Node*
+    }
 }
