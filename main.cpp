@@ -19,7 +19,7 @@ struct compareNodeptr {
 string path = "";
 void count_occurences(string buff ,unordered_map<char , unsigned int>&freq);
 Node* generate_huffman_tree(unordered_map<char ,unsigned int>&freq);
-void create_node(char, unsigned int);
+Node* create_node(char, unsigned int);
 int main()
 {
 
@@ -29,7 +29,8 @@ int main()
         cout<<it->first<<":"<< it->second<<endl;
     }
     priority_queue<Node*, vector<Node*>, compareNodeptr> pq;
-
+    Node* root = generate_huffman_tree(freq);
+    cout<< root->is_char;
 
     return 0;
 }
@@ -71,7 +72,21 @@ Node* generate_huffman_tree(unordered_map<char , unsigned int>&freq ) {
         pq.push(char_node);
         number_of_chars++;
     }
-    for(int idx = 0; idx < number_of_chars - 1 ; ++idx ) {
-        Node*
+    cout<< number_of_chars<<" heh";
+    for(int idx = 0; idx < number_of_chars -1  ; ++idx ) {
+        Node* combined_node;
+        Node* left_node = pq.top();
+        pq.pop();
+        Node* right_node = pq.top();
+        pq.pop();
+        unsigned int sum_freq = right_node->frequency + left_node->frequency;
+        combined_node = create_node(0,sum_freq);
+        combined_node->left = left_node;
+        combined_node->right = right_node;
+        combined_node->is_char = false;
+        pq.push(combined_node);
     }
+    Node* root = pq.top();
+    pq.pop();
+    return root;
 }
