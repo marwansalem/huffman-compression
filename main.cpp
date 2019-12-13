@@ -1,4 +1,5 @@
 #include <bits/stdc++.h>
+#include <stdlib.h>
 using namespace std;
 
 struct Node{
@@ -14,25 +15,72 @@ struct compareNodeptr {
     }
 
 };
+enum operation_mode { compress_file, decompress_file,compress_folder , decompress_folder  };
+operation_mode mode = compress_file;
 
 
-string path = "";
+char* process_input();
 void count_occurences(string buff ,unordered_map<char , unsigned int>&freq);
 Node* generate_huffman_tree(unordered_map<char ,unsigned int>&freq);
 Node* create_node(char, unsigned int);
-int main()
+void compress(unordered_map<char, string>&char_to_code, char* out_path);
+int main(int argc ,char **argv)
 {
+    char* fpath;
+    if(argc == 1) {// no inputs through command line then scan the inputs
+        printf("Choose mode:\n1-Compress File\n2-Decompress File\n3-Compress Folder\n4-Decompress Folder\n");
+        int mode_type;
+        scanf("%d", &mode_type);
+        mode_type--;
+        mode = (operation_mode)mode_type;
+
+        fpath = (char*)malloc(512 * sizeof(char) );
+        printf("Input Target path:\n");
+        fgets(fpath,512,stdin);
+    }else{
+        // -c compress file
+        // -d decompress file
+        // -f compress folder
+        // -j decompress folder
+        if(!strcmp(argv[1], "-c") ) {
+            mode = compress_file;
+        } else if(!strcmp(argv[1], "-d") ) {
+            mode = decompress_file;
+        } else if(!strcmp(argv[1], "-f") ) {
+            mode = compress_folder;
+        } else if(!strcmp(argv[1], "-j") ) {
+            mode = decompress_folder;
+        } else if(!strcmp(argv[1],"-h") ) {
+            printf("Available commands\ncompress file:\"-c\"\ndecompress file:\"-d\"decompress file\n" );
+            printf("compress folder\"-f\"\ndecompress folder\"-j\"\n");
+            exit(1);
+
+        } else {
+            printf("Unknown command \"%s\", enter -h to know available commands",argv[1]);
+            exit(0);
+        }
+        fpath = argv[2];
+    }
+
 
     unordered_map<char, unsigned int> freq;
-    count_occurences("aabbc ",freq);
+    count_occurences("aaaaaaabdbc ",freq);
     for(auto it = freq.begin(); it != freq.end(); ++it) {
         cout<<it->first<<":"<< it->second<<endl;
     }
     priority_queue<Node*, vector<Node*>, compareNodeptr> pq;
     Node* root = generate_huffman_tree(freq);
-    cout<< root->is_char;
+    cout<< root->right->character;
 
     return 0;
+}
+
+char* process_input(){
+    char tokens[16][256];
+    int token_count = 0;
+    int file_path_idx = 0;
+    char delimiter[2] = " ";
+
 }
 void count_occurences(string buffer, unordered_map<char, unsigned int>&frequency) {
 
@@ -66,27 +114,33 @@ Node* generate_huffman_tree(unordered_map<char , unsigned int>&freq ) {
 
     priority_queue<Node*, vector<Node*>, compareNodeptr> pq;
     int number_of_chars = 0;
+    // create a node for each character and insert into min priority queue
     for(auto iter = freq.begin(); iter != freq.end(); ++iter ) {
         Node* char_node = create_node(iter->first, iter->second);
         char_node->is_char = true;
         pq.push(char_node);
         number_of_chars++;
     }
-    cout<< number_of_chars<<" heh";
+    //huffman compression algorithm
     for(int idx = 0; idx < number_of_chars -1  ; ++idx ) {
         Node* combined_node;
         Node* left_node = pq.top();
         pq.pop();
         Node* right_node = pq.top();
         pq.pop();
+        //cout << "left:" << left_node->character << "right:" <<right_node->character << endl;
         unsigned int sum_freq = right_node->frequency + left_node->frequency;
         combined_node = create_node(0,sum_freq);
         combined_node->left = left_node;
         combined_node->right = right_node;
+
         combined_node->is_char = false;
+        //flag to mark this node as a non character node
+
         pq.push(combined_node);
     }
     Node* root = pq.top();
+
     pq.pop();
     return root;
 }
