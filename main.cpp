@@ -1,5 +1,6 @@
 #include <bits/stdc++.h>
 #include <stdlib.h>
+#include <dirent.h>
 using namespace std;
 
 struct Node{
@@ -23,7 +24,8 @@ char* process_input();
 void count_occurences(string buff ,unordered_map<char , unsigned int>&freq);
 Node* generate_huffman_tree(unordered_map<char ,unsigned int>&freq);
 Node* create_node(char, unsigned int);
-void compress(unordered_map<char, string>&char_to_code, char* out_path);
+void compress( unordered_map<char, string> &char_to_code, char* out_path);
+void decompress(char* fpath);
 int main(int argc ,char **argv)
 {
     char* fpath;
@@ -67,6 +69,38 @@ int main(int argc ,char **argv)
         fpath = argv[2];
     }
 
+    unordered_map<char, string> char_to_code;
+    //must read_file change it into string buffer
+    switch(mode) {
+        case compress_file: {
+
+            compress(char_to_code,fpath);
+            break;
+        }
+        case decompress_file: {
+            decompress(fpath);
+            break;
+        }
+        case decompress_folder:
+        case compress_folder: {
+            DIR *d;
+            struct dirent *dir;
+            d = opendir(".");
+            if (d) {
+                while ((dir = readdir(d)) != NULL) {
+                    char* full_name=strcat(fpath,dir->d_name);
+                    if(mode == compress_folder) {
+                        compress(char_to_code, full_name);
+                    } else {
+                        decompress(fpath);
+                    }
+                }
+            closedir(d);
+            }
+            break;
+        }
+
+    }
 
     unordered_map<char, unsigned int> freq;
     count_occurences("aaaaaaabdbc ",freq);
@@ -80,13 +114,7 @@ int main(int argc ,char **argv)
     return 0;
 }
 
-char* process_input(){
-    char tokens[16][256];
-    int token_count = 0;
-    int file_path_idx = 0;
-    char delimiter[2] = " ";
 
-}
 void count_occurences(string buffer, unordered_map<char, unsigned int>&frequency) {
 
     int len = buffer.length();
@@ -148,4 +176,14 @@ Node* generate_huffman_tree(unordered_map<char , unsigned int>&freq ) {
 
     pq.pop();
     return root;
+}
+
+void compress(unordered_map<char, string> &char_to_code, char* fpath) {
+
+
+
+}
+void decompress(char* fpath) {
+
+
 }
