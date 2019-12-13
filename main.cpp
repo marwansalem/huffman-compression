@@ -59,6 +59,11 @@ int main(int argc ,char **argv)
             printf("Unknown command \"%s\", enter -h to know available commands",argv[1]);
             exit(0);
         }
+
+        if(argc<2 ) {
+            printf("Argument missing, must input path");
+            exit(0);
+        }
         fpath = argv[2];
     }
 
