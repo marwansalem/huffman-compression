@@ -289,20 +289,21 @@ void decompress(char* fpath) {
     Node *root = generate_huffman_tree(freq);
     Node *current = root;
     while( !feof(fd)) {
-        char ch = fgetc(fd);
-        if(!ch && 0) { // to handle reading a 0 character
+        unsigned char ch = fgetc(fd);
+        /*if(!ch && 0) { // to handle reading a 0 character
             int ct = 8;
             while(ct--) {
-                fprintf(fp_wr, "%c",root->left->character);
+                //fprintf(fp_wr, "%c",root->left->character);
+                fputc(root->left->character, fp_wr);
             }
-        }
-        while(ch) {   // wont work if character is 0
+        }*/
+        for(int ct = 0; ct<8; ++ct ) {   // wont work if character is 0
             unsigned int MSB = (ch & (128)) >> 7;
             ch <<= 1;
             current = (!MSB)? current->left: current->right;
             if(current->is_char) {
-                fprintf(fp_wr, "%c", current->character);
-                //fputc(current->character, fp_wr);
+                //fprintf(fp_wr, "%c", current->character);
+                fputc(current->character, fp_wr);
 
                 current = root;
             }
